@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ncurses.h>
 
 #include <opencv2/core/core.hpp>        // Basic OpenCV structures (cv::Mat, Scalar)
 #include <opencv2/imgproc/imgproc.hpp>  // Gaussian Blur
@@ -10,14 +11,18 @@ using namespace cv;
 
 int main()
 {
-    std::string letters = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`\'.";
+    initscr();
+
+    std::string letters = ".'`^\",:;Il!i><~+_-?][}{1)(|\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 
     VideoCapture cap(-1);     // get 'any' cam
     while( cap.isOpened() )   // check if we succeeded
     {
         Mat frame;
-        if ( ! cap.read(frame) )
-            break;
+        if (!cap.read(frame))
+        {
+            frame = Mat();
+        }
         //imshow("Float",frame);
         //std::cout << (int)frame.at<char>(0, 0) << ", " << (int)frame.at<char>(0, 1) << ", " << (int)frame.at<char>(0, 2) << "\n";
 
@@ -26,29 +31,39 @@ int main()
 
         int terminalWidth = 150;
         int terminalHeight = (80 * frame.rows) / frame.cols;
+        float scrToTermRation = frame.cols / terminalWidth;
         std::cout << terminalHeight << "\n";
 
-        for (int y = 0; y < frame.rows; y += frame.rows / terminalHeight)
+        for (int y = 0; y < terminalHeight; y++)
         {
-            for (int x = 0; x < frame.cols; x += frame.cols / terminalWidth)
+            for (int x = 0; x < terminalWidth; x++)
             {
                 //int R = frame.at<char>()
-                Vec3b pixel = frame.at<Vec3b>(y, x);
+                Vec3b pixel = frame.at<Vec3b>(y * scrToTermRation * 2, x * scrToTermRation);
                 int r = pixel.val[2];
                 int g = pixel.val[1];
                 int b = pixel.val[0];
 
-                std::cout << letters.at(((r+g+b) / 768.0) * letters.length());
+                //std::cout << letters.at(((r+g+b) / 768.0) * letters.length());
                 //std::cout << x << "," << y << "\n";
                 //std::cout << ((r+g+b) / 768.0) * letters.length() << "\n";
+                char letter = (char)(letters.at(((r+g+b) / 768.0) * letters.length()));
+                //printw(&letter);
+                mvaddch(y, x, letter);
+                refresh();
             }
-            std::cout << "\n";
+            mvaddch(y, terminalWidth + 1, '\n');
+            refresh();
+            //std::cout << "\n";
         }
 
         int k = waitKey(33);
         if ( k==27 )
             break;
     }
+
+    endwin();
+
     return 0;
 }
 

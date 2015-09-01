@@ -11,11 +11,9 @@ using namespace cv;
 
 int main()
 {
-    std::string letters = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`\'.";
+    initscr();
 
-    initscr();                 /* Start curses mode     */
-    printw("Hello World !!!"); /* Print Hello World    */
-    refresh();                 /* Print it on to the real screen */
+    std::string letters = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`\'.";
 
     VideoCapture cap(-1);     // get 'any' cam
     while( cap.isOpened() )   // check if we succeeded
@@ -31,11 +29,12 @@ int main()
 
         int terminalWidth = 150;
         int terminalHeight = (80 * frame.rows) / frame.cols;
+        
         std::cout << terminalHeight << "\n";
 
-        for (int y = 0; y < frame.rows; y += frame.rows / terminalHeight)
+        for (int y = 0; y < terminalHeight; y++)
         {
-            for (int x = 0; x < frame.cols; x += frame.cols / terminalWidth)
+            for (int x = 0; x < terminalWidth; x++)
             {
                 //int R = frame.at<char>()
                 Vec3b pixel = frame.at<Vec3b>(y, x);
@@ -43,11 +42,17 @@ int main()
                 int g = pixel.val[1];
                 int b = pixel.val[0];
 
-                std::cout << letters.at(((r+g+b) / 768.0) * letters.length());
+                //std::cout << letters.at(((r+g+b) / 768.0) * letters.length());
                 //std::cout << x << "," << y << "\n";
                 //std::cout << ((r+g+b) / 768.0) * letters.length() << "\n";
+                char letter = (char)(letters.at(((r+g+b) / 768.0) * letters.length()));
+                //printw(&letter);
+                mvaddch(y, x, letter);
+                refresh();
             }
-            std::cout << "\n";
+            mvaddch(y, terminalWidth + 1, letter)
+            //refresh();
+            //std::cout << "\n";
         }
 
         int k = waitKey(33);
@@ -55,7 +60,7 @@ int main()
             break;
     }
 
-    endwin();                  /* End curses mode    */
+    endwin();
 
     return 0;
 }
