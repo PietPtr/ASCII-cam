@@ -10,23 +10,47 @@ using namespace cv;
 
 int main()
 {
+    std::string letters = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`\'.";
+
     VideoCapture cap(-1);     // get 'any' cam
     while( cap.isOpened() )   // check if we succeeded
     {
         Mat frame;
         if ( ! cap.read(frame) )
             break;
-        imshow("lalala",frame);
+        //imshow("Float",frame);
+        //std::cout << (int)frame.at<char>(0, 0) << ", " << (int)frame.at<char>(0, 1) << ", " << (int)frame.at<char>(0, 2) << "\n";
+
+        //for (int y = 0; y < )
+        //std::cout << "Width: " << frame.cols << ", Height: " << frame.rows << "\n";
+
+        int terminalWidth = 150;
+        int terminalHeight = (80 * frame.rows) / frame.cols;
+        std::cout << terminalHeight << "\n";
+
+        for (int y = 0; y < frame.rows; y += frame.rows / terminalHeight)
+        {
+            for (int x = 0; x < frame.cols; x += frame.cols / terminalWidth)
+            {
+                //int R = frame.at<char>()
+                Vec3b pixel = frame.at<Vec3b>(y, x);
+                int r = pixel.val[2];
+                int g = pixel.val[1];
+                int b = pixel.val[0];
+
+                std::cout << letters.at(((r+g+b) / 768.0) * letters.length());
+                //std::cout << x << "," << y << "\n";
+                //std::cout << ((r+g+b) / 768.0) * letters.length() << "\n";
+            }
+            std::cout << "\n";
+        }
+
         int k = waitKey(33);
         if ( k==27 )
             break;
     }
     return 0;
 }
-
-
-
-
 
 
 /* Outdated C interface \/
