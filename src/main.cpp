@@ -11,14 +11,14 @@ using namespace cv;
 
 int main()
 {
-    //initscr();
+    initscr();
 
     std::string letters = " .'`^\",:;Il!i><~+_-?][}{1)(|\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 
     VideoCapture cap(-1);     // get 'any' cam
     while( cap.isOpened() )   // check if we succeeded
     {
-        Mat frame(640, 480, CV_8UC3, Scalar(0, 0, 255));
+        Mat frame;//(640, 480, CV_8UC3, Scalar(0, 0, 255));
         cap.read(frame);
 
         //flip(frame, frame, 1);
@@ -46,15 +46,15 @@ int main()
                 //std::cout << letters.at(((r+g+b) / 768.0) * letters.length());
                 //std::cout << x << "," << y << "\n";
                 //std::cout << ((r+g+b) / 768.0) * letters.length() << "\n";
-                std::cout << r + g + b << ", " << (r+g+b) / 768.0 <<  "\n";
-                int index = (int)(((r+g+b) / 768.0) * letters.length());
+                //std::cout << r + g + b << ", " << (r+g+b) / 768.0 <<  "\n";
+                int index = (int)(((float)(r+g+b) / 768.0) * letters.length());
                 char letter = (char)(letters.at(index));
                 //printw(&letter);
-                //mvaddch(y, x, letter);
-                //refresh();
+                mvaddch(y, x, letter);
+                refresh();
             }
-            //mvaddch(y, terminalWidth + 1, '\n');
-            //refresh();
+            mvaddch(y, terminalWidth + 1, '\n');
+            refresh();
             //std::cout << "\n";
         }
 
@@ -63,7 +63,8 @@ int main()
         //    break;
     }
 
-    //endwin();
+
+    endwin();
 
     return 0;
 }
