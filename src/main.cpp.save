@@ -11,33 +11,34 @@ using namespace cv;
 
 int main()
 {
-    initscr();
+    //initscr();
 
-    std::string letters = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`\'.";
+    std::string letters = " .'`^\",:;Il!i><~+_-?][}{1)(|\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 
     VideoCapture cap(-1);     // get 'any' cam
     while( cap.isOpened() )   // check if we succeeded
     {
-        Mat frame;
-        if ( ! cap.read(frame) )
-            break;
+        Mat frame(640, 480, CV_8UC3, Scalar(0, 0, 255));
+        cap.read(frame);
+
+        //flip(frame, frame, 1);
         //imshow("Float",frame);
         //std::cout << (int)frame.at<char>(0, 0) << ", " << (int)frame.at<char>(0, 1) << ", " << (int)frame.at<char>(0, 2) << "\n";
 
         //for (int y = 0; y < )
         //std::cout << "Width: " << frame.cols << ", Height: " << frame.rows << "\n";
 
-        int terminalWidth = 150;
-        int terminalHeight = (80 * frame.rows) / frame.cols;
-        
-        std::cout << terminalHeight << "\n";
+        int terminalWidth = 140;
+        int terminalHeight = (terminalWidth * frame.rows) / frame.cols * 0.53;
+        int scrToTermRation = frame.cols / terminalWidth;
+       //std::cout << terminalHeight << "\n";
 
         for (int y = 0; y < terminalHeight; y++)
         {
             for (int x = 0; x < terminalWidth; x++)
             {
                 //int R = frame.at<char>()
-                Vec3b pixel = frame.at<Vec3b>(y, x);
+                Vec3b pixel = frame.at<Vec3b>(y * scrToTermRation * 2, x * scrToTermRation);
                 int r = pixel.val[2];
                 int g = pixel.val[1];
                 int b = pixel.val[0];
@@ -45,22 +46,24 @@ int main()
                 //std::cout << letters.at(((r+g+b) / 768.0) * letters.length());
                 //std::cout << x << "," << y << "\n";
                 //std::cout << ((r+g+b) / 768.0) * letters.length() << "\n";
-                char letter = (char)(letters.at(((r+g+b) / 768.0) * letters.length()));
+                int index = (int)(((r+g+b) / 768.0) * letters.length());
+                char letter = (char)(letters.at(index));
+                std::cout << r + g + b << ", " << (r+g+b) / 768.0 <<  "\n";
                 //printw(&letter);
-                mvaddch(y, x, letter);
-                refresh();
+                //mvaddch(y, x, letter);
+                //refresh();
             }
-            mvaddch(y, terminalWidth + 1, letter)
+            //mvaddch(y, terminalWidth + 1, '\n');
             //refresh();
             //std::cout << "\n";
         }
 
-        int k = waitKey(33);
-        if ( k==27 )
-            break;
+        //int k = waitKey(33);
+        //if ( k==27 )
+        //    break;
     }
 
-    endwin();
+    //endwin();
 
     return 0;
 }

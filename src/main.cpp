@@ -11,28 +11,27 @@ using namespace cv;
 
 int main()
 {
-    initscr();
+    //initscr();
 
-    std::string letters = ".'`^\",:;Il!i><~+_-?][}{1)(|\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
+    std::string letters = " .'`^\",:;Il!i><~+_-?][}{1)(|\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 
     VideoCapture cap(-1);     // get 'any' cam
     while( cap.isOpened() )   // check if we succeeded
     {
-        Mat frame;
-        if (!cap.read(frame))
-        {
-            frame = Mat();
-        }
+        Mat frame(640, 480, CV_8UC3, Scalar(0, 0, 255));
+        cap.read(frame);
+
+        //flip(frame, frame, 1);
         //imshow("Float",frame);
         //std::cout << (int)frame.at<char>(0, 0) << ", " << (int)frame.at<char>(0, 1) << ", " << (int)frame.at<char>(0, 2) << "\n";
 
         //for (int y = 0; y < )
         //std::cout << "Width: " << frame.cols << ", Height: " << frame.rows << "\n";
 
-        int terminalWidth = 150;
-        int terminalHeight = (80 * frame.rows) / frame.cols;
-        float scrToTermRation = frame.cols / terminalWidth;
-        std::cout << terminalHeight << "\n";
+        int terminalWidth = 140;
+        int terminalHeight = (terminalWidth * frame.rows) / frame.cols * 0.53;
+        int scrToTermRation = frame.cols / terminalWidth;
+       //std::cout << terminalHeight << "\n";
 
         for (int y = 0; y < terminalHeight; y++)
         {
@@ -47,22 +46,24 @@ int main()
                 //std::cout << letters.at(((r+g+b) / 768.0) * letters.length());
                 //std::cout << x << "," << y << "\n";
                 //std::cout << ((r+g+b) / 768.0) * letters.length() << "\n";
-                char letter = (char)(letters.at(((r+g+b) / 768.0) * letters.length()));
+                std::cout << r + g + b << ", " << (r+g+b) / 768.0 <<  "\n";
+                int index = (int)(((r+g+b) / 768.0) * letters.length());
+                char letter = (char)(letters.at(index));
                 //printw(&letter);
-                mvaddch(y, x, letter);
-                refresh();
+                //mvaddch(y, x, letter);
+                //refresh();
             }
-            mvaddch(y, terminalWidth + 1, '\n');
-            refresh();
+            //mvaddch(y, terminalWidth + 1, '\n');
+            //refresh();
             //std::cout << "\n";
         }
 
-        int k = waitKey(33);
-        if ( k==27 )
-            break;
+        //int k = waitKey(33);
+        //if ( k==27 )
+        //    break;
     }
 
-    endwin();
+    //endwin();
 
     return 0;
 }
